@@ -11,17 +11,18 @@ class Settings():
         self.framerate = 100
         self.neutalNetworkDimensions = {"input" : 24, "hidden" : 16, "output" : 4}
         
-
         '''  '''
         self.debug = False
         self.profiling = True
 
-        ''' Settings for number of snakes '''
-        self.numberOfSnakes = 300
+        ''' Settings for snakes '''
+        self.generation = 0
+        self.numberOfSnakes = 2000
         self.numberOfSnakesAlive = self.numberOfSnakes
         self.totalFitness = 0
-        self.mutationRate = .1
+        self.mutationRate = .01
         self.globalBestScore = 0
+        
 
         ''' for saving brain '''
         self.whi = None
@@ -34,9 +35,9 @@ class Settings():
         self.whh = NN.whh
         self.woh = NN.woh
 
-    def getBestBrain(self):
-        #print(self.whi, self.whh, self.woh)
-        return(self.whi, self.whh, self.woh)
+    def printBestBrain(self):
+        print(self.whi, self.whh, self.woh)
+        #return(self.whi, self.whh, self.woh)
 
 
         

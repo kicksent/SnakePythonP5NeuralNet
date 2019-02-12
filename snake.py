@@ -2,8 +2,8 @@ from p5 import *
 import numpy as np
 class Snake:
     def __init__(self, settings, foodObj):
-        self.x = 18*settings.scale
-        self.y = 25*settings.scale
+        self.x = 20*settings.scale
+        self.y = 20*settings.scale
         self.xSpeed = settings.scale
         self.ySpeed = 0
         self.scale = settings.scale
@@ -15,6 +15,7 @@ class Snake:
         self.fitness = 0
         self.lifetime = 0
         self.isBestSnake = False
+        self.movesRemaining = 100
 
     def update(self):
         if(self.alive):
@@ -34,6 +35,7 @@ class Snake:
             self.lifetime += 1;
 
             #class methods
+            self.movesRemaining -= 1
             self.checkForDeath()
             self.eatFood()
             self.show()
@@ -61,31 +63,45 @@ class Snake:
         d = dist((self.x, self.y), (self.food.x, self.food.y))  
         if(d == 0):
             self.total+=1
+            self.movesRemaining += 100
             self.food.eaten = True
 
     def checkForDeath(self):
-        for i in range(len(self.tail)):
-            d = dist((self.x, self.y), (self.tail[i]))
-            if d == 0:
-                self.alive = False
-                self.settings.numberOfSnakesAlive -= 1
-                self.calcFitness();
-                self.settings.totalFitness += self.fitness
-                print("Fitness:", self.fitness)
+        #print("Moves remaining:", self.movesRemaining)
+        if(self.movesRemaining < 0):
+            self.alive = False
+            self.settings.numberOfSnakesAlive -= 1
+            self.calcFitness();
+            self.settings.totalFitness += self.fitness
+            print("Fitness:", self.fitness, "snake ran out of moves, moves remaining:", self.movesRemaining)
+        else:
+            for i in range(len(self.tail)):
+                d = dist((self.x, self.y), (self.tail[i]))
+                if d == 0:
+                    self.alive = False
+                    self.settings.numberOfSnakesAlive -= 1
+                    self.calcFitness();
+                    self.settings.totalFitness += self.fitness
+                    print("Fitness:", self.fitness, "snake died to wall or tail")
     
     def setFitness(self, fitnessValue):
         self.fitness = fitnessValue
 
     def calcFitness(self):
-        self.fitness = np.power(self.lifetime, 2) * np.power(self.total, 3);
+        if(self.total < 10):
+            self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total);
+        else:
+            self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
         
     def resetSnake(self):
         self.xSpeed = self.settings.scale
         self.ySpeed = 0
-        self.x = 18*self.settings.scale
-        self.y = 25*self.settings.scale
+        self.x = 20*self.settings.scale
+        self.y = 20*self.settings.scale
         self.total = 2
         self.tail = [(self.x-self.settings.scale, self.y),(self.x-(2*self.settings.scale), self.y)]
         self.alive = True
         self.fitness = 0
         self.lifetime = 0
+        self.movesRemaining = 100
+        self.food.spawnAtRandomLocation()

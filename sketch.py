@@ -26,18 +26,16 @@ def draw():
     background(0)
     #run population
     P.run()
+    text("GENERATION: {}".format(settings.generation), (100,100), wrap_at=None)
 
 
 
 
 def key_pressed(event):
-    if(key == 'W'):
-        S.dir(0, -1)
-    if(key == 'S'):
-        S.dir(0, 1)
-    if(key == 'A'):
-        S.dir(-1, 0)        
-    if(key == 'D'):
-        S.dir(1, 0)
+    if(key == 'h'):
+        settings.mutationRate /= 2  
+    if(key == 'd'):
+        settings.mutationRate *= 2
+    
 
 run(frame_rate = settings.framerate)

@@ -1,6 +1,9 @@
 import numpy as np
 np.set_printoptions(linewidth = 200)
 from snake import Snake
+
+from cprofiler import profile 
+
 class Inputs:
     def __init__(self, settings, snake, food):
         self.settings = settings
@@ -12,6 +15,7 @@ class Inputs:
         self.snake = snake
         self.food = food
 
+    
     def generateInputs(self):
         
         inputVector = np.array([0]*24, dtype=float)
@@ -58,6 +62,7 @@ class Inputs:
         inputVector[23] = temp8[2];
         self.inputVector = inputVector
 
+    
     def look(self, dir): #dir is a vector
         pos = np.array([self.snake.x, self.snake.y], dtype=float)
         dir = np.array(dir, dtype=float)
@@ -68,9 +73,7 @@ class Inputs:
         foodFound = False
         tailFound = False
 
-        while(not(pos[0] < 0 or pos[1] < 0 or pos[0] >= self.settings.xyMaxValue or pos[1] >= self.settings.xyMaxValue)):
-#        while(not(pos[0] < 0 or pos[1] < 0 or pos[0] >= self.settings.windowSize or pos[1] >= self.settings.windowSize)):
-            
+        while(not(pos[0] < 0 or pos[1] < 0 or pos[0] >= self.settings.xyMaxValue or pos[1] >= self.settings.xyMaxValue)):            
             #check for food
             if(not foodFound and pos[0] == self.food.x and pos[1] == self.food.y):
                 vision[0] = 1
@@ -90,5 +93,4 @@ class Inputs:
             if(pos[0] == self.snake.tail[i][0] and pos[1] == self.snake.tail[i][1]):
                 return True
         return False
-
-#dist((),())
+        

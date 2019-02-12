@@ -2,9 +2,12 @@
 import numpy as np
 np.set_printoptions(linewidth = 200, precision = 10)
 from scipy.special import expit
+
 import numba
 from numba import jit
+
 from cprofiler import profile
+from p5 import *
 
 class NeuralNetwork:
     def __init__(self, settings, snake, inputs):
@@ -25,6 +28,7 @@ class NeuralNetwork:
         self.dir_array = ["left", "right", "up", "down"];
         self.outputArray = []
         self.inputs = inputs
+        self.isBestBrain = False
 
     
     def controlSnake(self):
@@ -83,63 +87,50 @@ class NeuralNetwork:
             for j in range(self.whi.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
                     self.whi[i,j] += np.random.random()/5
+                    constrain(self.whi[i,j], -1, 1)
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
                     self.whh[i,j] += np.random.random()/5
+                    constrain(self.whh[i,j], -1, 1)
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
                     self.woh[i,j] += np.random.random()/5
+                    constrain(self.woh[i,j], -1, 1)
         return(self)
+        
 
 
-    def crossover(self, oldSnake, partner):
-        rand = np.random.rand()
+    def crossover(self, parent1, parent2): 
         randC = np.random.randint(self.whi.shape[0])
         randR = np.random.randint(self.whi.shape[1])
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
-                if(rand <= .5):
-                    if i < randR or ( i == randR and j <= randC):
-                        self.whi[i,j] = partner.whi[i,j]
-                    else:
-                        self.whi[i,j] = oldSnake.whi[i,j]
+                if i < randR or ( i == randR and j <= randC):
+                    self.whi[i,j] = parent1.whi[i,j]
                 else:
-                    if i < randR or ( i == randR and j <= randC):
-                        self.whi[i,j] = oldSnake.whi[i,j]
-                    else:
-                        self.whi[i,j] = partner.whi[i,j]
-        rand = np.random.rand()
+                    self.whi[i,j] = parent2.whi[i,j]
+                    
         randC = np.random.randint(self.whh.shape[0])
         randR = np.random.randint(self.whh.shape[1])
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
-                if(rand <= .5):
                     if i < randR or ( i == randR and j <= randC):
-                        self.whh[i,j] = partner.whh[i,j]
+                        self.whh[i,j] = parent1.whh[i,j]
                     else:
-                        self.whi[i,j] = oldSnake.whi[i,j]
-                else:
-                    if i < randR or ( i == randR and j <= randC):
-                        self.whi[i,j] = oldSnake.whi[i,j]
-                    else:
-                        self.whh[i,j] = partner.whh[i,j]
-
+                        self.whh[i,j] = parent2.whh[i,j]
+                
         randC = np.random.randint(self.woh.shape[0])
         randR = np.random.randint(self.woh.shape[1])
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
-                if(rand <= .5):
-                    if i < randR or ( i == randR and j <= randC):
-                        self.woh[i,j] = partner.woh[i,j]
-                    else:
-                        self.whi[i,j] = oldSnake.whi[i,j]
+                if i < randR or ( i == randR and j <= randC):
+                    self.woh[i,j] = parent1.woh[i,j]
                 else:
-                    if i < randR or ( i == randR and j <= randC):
-                        self.whi[i,j] = oldSnake.whi[i,j]
-                    else:
-                        self.woh[i,j] = partner.woh[i,j]
+                    self.woh[i,j] = parent2.woh[i,j]
+        return(self)
+            
 
 
 
