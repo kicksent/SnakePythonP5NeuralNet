@@ -4,6 +4,11 @@ from snake import Snake
 
 from cprofiler import profile 
 
+'''
+The class for the inputs being fed into the Neural Network
+Each instance of the NN requires an instance of Inputs class
+'''
+
 class Inputs:
     def __init__(self, settings, snake, food):
         self.settings = settings

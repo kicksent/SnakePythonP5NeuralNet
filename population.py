@@ -16,19 +16,33 @@ class Population:
         self.InputArr = []
         self.NNArr = []
         self.snakesAlive = settings.numberOfSnakes
+        self.currentBestIndex = 0
     def setup(self):
         for i in range(self.settings.numberOfSnakes):
             self.FoodArr.append(Food(self.settings))
             self.SnakeArr.append(Snake(self.settings, self.FoodArr[i]))
             self.InputArr.append(Inputs(self.settings, self.SnakeArr[i], self.FoodArr[i]))
-            self.NNArr.append(NeuralNetwork(self.settings, self.SnakeArr[i], self.InputArr[i]))
+            self.NNArr.append(NeuralNetwork(self.settings, self.InputArr[i]))
+        self.SnakeArr[0].hasBestBrain = True
+        self.FoodArr[0].isFoodForBestSnake = True
 
-    def reset(self):
+    def reInitialize(self):
         self.FoodArr = []
         self.SnakeArr = []
         self.InputArr = []
         self.NNArr = []
         self.setup()
+    
+    def reset(self):
+        self.settings.reset()
+
+        # set True for displaying best
+        self.SnakeArr[0].hasBestBrain = True
+        self.FoodArr[0].isFoodForBestSnake = True
+
+        # reset snake fitnesses
+        for i in range(self.settings.numberOfSnakes):
+            self.SnakeArr[i].resetSnake()
     
     
     def run(self):
@@ -37,42 +51,45 @@ class Population:
             if(self.SnakeArr[i].alive == True):
                 self.FoodArr[i].update()
                 self.InputArr[i].generateInputs()
-                self.NNArr[i].controlSnake()
+                self.NNArr[i].controlSnake(self.SnakeArr[i])
             self.snakesAlive = self.settings.numberOfSnakesAlive
             if(self.snakesAlive == 0):
                 print("All Snakes Have Died")
-                self.startNextGenetation();
+                self.startNextGeneration();
+                
     
-    def startNextGenetation(self):
+    def startNextGeneration(self):
         #increment generation
         self.settings.generation += 1
         
-        #save best snake brain
-        self.setBestSnakeBrain()
-
-        
-        #create a New Neural Network that has been mutated 
-        updatedNeuralNetwork = []
-        
+        #create a New NN from Old NN that has been mutated
+        newNNArr = []
         for i in range(self.settings.numberOfSnakes):
             #create babies
-            if(self.SnakeArr[i].isBestSnake == False):
-                newNN = self.naturalSelection(NeuralNetwork(self.settings, self.SnakeArr[i], self.InputArr[i]))
-                updatedNeuralNetwork.append(newNN);
-            else:
-                #best snake goes on unchanged
-                print("KEEPING BEST SNAKE")
-                updatedNeuralNetwork.append(self.NNArr[i]);
+            newNN = self.naturalSelection(i).clone()
+            newNNArr.append(newNN);
 
-        for i in range(self.settings.numberOfSnakes):
-            self.SnakeArr[i].resetSnake()
+        #set index 0 to best snake brain
+        bestIndex = self.getBestSnakeBrain()
+        newNNArr[0] = self.NNArr[bestIndex].clone()
 
-        self.NNArr = updatedNeuralNetwork
-        self.settings.numberOfSnakesAlive = self.settings.numberOfSnakes
-        self.settings.totalFitness = 0
+
+        ''' test'''
+        #self.NNArr = newNNArr
+        for i in range(len(self.NNArr)):
+            self.NNArr[i] = newNNArr[i].clone()
+        ''''''
+
+        #reset scores
+        self.reset()
+
         
     
-    def naturalSelection(self, childNN):
+    def naturalSelection(self, index):
+        #create a new NeuralNetwork
+        childNN = NeuralNetwork(self.settings, self.InputArr[index])
+        
+        # select two brains from the existing pool to mate
         childNN = childNN.crossover(self.selectNNFromSnakeFitness(), self.selectNNFromSnakeFitness())
         childNN = childNN.mutate()
         return(childNN)
@@ -95,22 +112,17 @@ class Population:
 
         raise Exception("Function should not reach here. Sum: {}, rand: {}, Fitness Sum: {} {} {} ".format(sum, rand, self.settings.totalFitness, total, total == self.settings.totalFitness))
 
-    def setBestSnakeBrain(self):
-        max = 0
+    def getBestSnakeBrain(self):
+        max_index = 0
         max_fitness = 0
         for i in range(self.settings.numberOfSnakes):
             if(self.SnakeArr[i].fitness > max_fitness):
                 self.settings.globalBestScore = self.SnakeArr[i].fitness
-                max = i
+                max_index = i
                 max_fitness = self.SnakeArr[i].fitness
-            else:
-                self.FoodArr[i].isFoodForBestSnake = False
-                self.NNArr[i].isBestBrain = False
-                self.SnakeArr[i].isBestSnake = False
+        return(max_index)
+    
 
-        self.FoodArr[max].isFoodForBestSnake = True
-        self.NNArr[max].isBestBrain = True
-        self.SnakeArr[max].isBestSnake = True
         
 
 

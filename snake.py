@@ -2,8 +2,8 @@ from p5 import *
 import numpy as np
 class Snake:
     def __init__(self, settings, foodObj):
-        self.x = 20*settings.scale
-        self.y = 20*settings.scale
+        self.x = settings.windowSize/2
+        self.y = settings.windowSize/2
         self.xSpeed = settings.scale
         self.ySpeed = 0
         self.scale = settings.scale
@@ -14,7 +14,7 @@ class Snake:
         self.alive = True
         self.fitness = 0
         self.lifetime = 0
-        self.isBestSnake = False
+        self.hasBestBrain = False
         self.movesRemaining = 100
 
     def update(self):
@@ -41,7 +41,7 @@ class Snake:
             self.show()
 
     def show(self):
-        if(self.isBestSnake):
+        if(self.hasBestBrain):
             fill(255)
             square((self.x, self.y), self.settings.scale)
             for i in range(len(self.tail)):
@@ -65,6 +65,8 @@ class Snake:
             self.total+=1
             self.movesRemaining += 100
             self.food.eaten = True
+            if(self.total > self.settings.globalBestTotal):
+                self.settings.globalBestTotal = self.total
 
     def checkForDeath(self):
         #print("Moves remaining:", self.movesRemaining)
@@ -96,8 +98,8 @@ class Snake:
     def resetSnake(self):
         self.xSpeed = self.settings.scale
         self.ySpeed = 0
-        self.x = 20*self.settings.scale
-        self.y = 20*self.settings.scale
+        self.x = self.settings.windowSize/2
+        self.y = self.settings.windowSize/2
         self.total = 2
         self.tail = [(self.x-self.settings.scale, self.y),(self.x-(2*self.settings.scale), self.y)]
         self.alive = True

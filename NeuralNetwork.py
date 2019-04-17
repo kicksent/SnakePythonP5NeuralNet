@@ -9,13 +9,15 @@ from numba import jit
 from cprofiler import profile
 from p5 import *
 
+import copy
+
+
 class NeuralNetwork:
-    def __init__(self, settings, snake, inputs):
+    def __init__(self, settings, inputs):
         self.settings = settings
         self.num_input = settings.neutalNetworkDimensions["input"];
         self.num_hidden = settings.neutalNetworkDimensions["hidden"];
         self.num_output = settings.neutalNetworkDimensions["output"];
-        self.snake = snake
         #self.in_neurons = [];
         #generate random starting weights for snake
         #np.array([np.random.uniform(-1,1) for i in range(8)]).reshape(2,4)
@@ -31,9 +33,9 @@ class NeuralNetwork:
         self.isBestBrain = False
 
     
-    def controlSnake(self):
+    def controlSnake(self, snake):
         self.output(self.inputs.inputVector)
-        self.updateTurnDirection()
+        self.updateTurnDirection(snake)
 
     
     def sigmoid(self,x):
@@ -61,7 +63,7 @@ class NeuralNetwork:
         return(res)
 
 
-    def updateTurnDirection(self):
+    def updateTurnDirection(self, snake):
         max = 0
         maxIndex = 0
         for i in range(len(self.outputArray)):
@@ -71,32 +73,32 @@ class NeuralNetwork:
 
         if maxIndex == 0:
             #left
-            self.snake.dir(-1, 0)
+            snake.dir(-1, 0)
         elif maxIndex == 1:
             #right
-            self.snake.dir(1, 0)
+            snake.dir(1, 0)
         elif maxIndex == 2:
             #up
-            self.snake.dir(0, -1)
+            snake.dir(0, -1)
         elif maxIndex == 3:
             #down
-            self.snake.dir(0, 1)
+            snake.dir(0, 1)
     
     def mutate(self):
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.whi[i,j] += np.random.random()/5
+                    self.whi[i,j] += np.random.random()/15
                     constrain(self.whi[i,j], -1, 1)
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.whh[i,j] += np.random.random()/5
+                    self.whh[i,j] += np.random.random()/15
                     constrain(self.whh[i,j], -1, 1)
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.woh[i,j] += np.random.random()/5
+                    self.woh[i,j] += np.random.random()/15
                     constrain(self.woh[i,j], -1, 1)
         return(self)
         
@@ -131,8 +133,16 @@ class NeuralNetwork:
                     self.woh[i,j] = parent2.woh[i,j]
         return(self)
             
+    #used for testing
+    def woh_to_arr(self):
+        arr = []
+        for i in range(self.num_output):
+            for j in range(self.num_hidden+1):
+                arr.append(self.woh[i][j])
+        return(arr)
 
 
-
+    def clone(self):
+        return(copy.deepcopy(self))
 
 

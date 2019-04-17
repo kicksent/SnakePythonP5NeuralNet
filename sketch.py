@@ -26,7 +26,9 @@ def draw():
     background(0)
     #run population
     P.run()
-    text("GENERATION: {}".format(settings.generation), (100,100), wrap_at=None)
+    text("Generation: {}".format(settings.generation), (0,100), wrap_at=None)
+    text("Highest number of eats: {}".format(settings.globalBestTotal), (0, 120), wrap_at=None)
+    text("Mutation rate: {}".format(settings.mutationRate), (0, 140), wrap_at=None)
 
 
 
