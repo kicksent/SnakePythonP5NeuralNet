@@ -10,15 +10,15 @@ Each instance of the NN requires an instance of Inputs class
 '''
 
 class Inputs:
-    def __init__(self, settings, snake, food):
+    def __init__(self, settings, snake):
         self.settings = settings
         self.snake = snake
-        self.food = food
+        self.food = self.snake.food
         self.inputVector = []
     
-    def update(self, snake, food):
+    def update(self, snake):
         self.snake = snake
-        self.food = food
+        self.food = self.snake.food
 
     
     def generateInputs(self):
@@ -80,7 +80,7 @@ class Inputs:
 
         while(not(pos[0] < 0 or pos[1] < 0 or pos[0] >= self.settings.xyMaxValue or pos[1] >= self.settings.xyMaxValue)):            
             #check for food
-            if(not foodFound and pos[0] == self.food.x and pos[1] == self.food.y):
+            if(not foodFound and pos[0] == self.snake.food.x and pos[1] == self.snake.food.y):
                 vision[0] = 1
                 foodFound = True
             #check for tail

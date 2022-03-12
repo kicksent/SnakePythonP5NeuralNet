@@ -41,11 +41,11 @@ class Snake:
             self.show()
 
     def show(self):
-        if(self.hasBestBrain):
-            fill(255)
-            square((self.x, self.y), self.settings.scale)
-            for i in range(len(self.tail)):
-                square(self.tail[i], self.settings.scale)
+        # if(self.hasBestBrain):
+        fill(255)
+        square((self.x, self.y), self.settings.scale)
+        for i in range(len(self.tail)):
+            square(self.tail[i], self.settings.scale)
 
 
     def dir(self, x, y):
@@ -63,17 +63,19 @@ class Snake:
         d = dist((self.x, self.y), (self.food.x, self.food.y))  
         if(d == 0):
             self.total+=1
-            self.movesRemaining += 100
+            self.movesRemaining += 150
             self.food.eaten = True
             if(self.total > self.settings.globalBestTotal):
                 self.settings.globalBestTotal = self.total
 
     def checkForDeath(self):
         #print("Moves remaining:", self.movesRemaining)
+        self.calcFitness()
+
         if(self.movesRemaining < 0):
             self.alive = False
             self.settings.numberOfSnakesAlive -= 1
-            self.calcFitness();
+            self.calcFitness()
             self.settings.totalFitness += self.fitness
             print("Fitness:", self.fitness, "snake ran out of moves, moves remaining:", self.movesRemaining)
         else:
@@ -82,7 +84,7 @@ class Snake:
                 if d == 0:
                     self.alive = False
                     self.settings.numberOfSnakesAlive -= 1
-                    self.calcFitness();
+                    self.calcFitness()
                     self.settings.totalFitness += self.fitness
                     print("Fitness:", self.fitness, "snake died to wall or tail")
     
@@ -106,4 +108,4 @@ class Snake:
         self.fitness = 0
         self.lifetime = 0
         self.movesRemaining = 100
-        self.food.spawnAtRandomLocation()
+        self.food.spawnAtInitialLocation()

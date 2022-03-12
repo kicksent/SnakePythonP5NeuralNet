@@ -88,18 +88,18 @@ class NeuralNetwork:
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.whi[i,j] += np.random.random()/15
-                    constrain(self.whi[i,j], -1, 1)
+                    self.whi[i,j] += np.random.random()/5
+                    self.whi[i,j] = constrain(self.whi[i,j], -1, 1)
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.whh[i,j] += np.random.random()/15
-                    constrain(self.whh[i,j], -1, 1)
+                    self.whh[i,j] += np.random.random()/5
+                    self.whh[i,j] = constrain(self.whh[i,j], -1, 1)
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
                 if(np.random.random() < self.settings.mutationRate):
-                    self.woh[i,j] += np.random.random()/15
-                    constrain(self.woh[i,j], -1, 1)
+                    self.woh[i,j] += np.random.random()/5
+                    self.woh[i,j] = constrain(self.woh[i,j], -1, 1)
         return(self)
         
 
@@ -109,24 +109,27 @@ class NeuralNetwork:
         randR = np.random.randint(self.whi.shape[1])
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
+                # randC = np.random.randint(self.whi.shape[0])
+                # randR = np.random.randint(self.whi.shape[1])
                 if i < randR or ( i == randR and j <= randC):
                     self.whi[i,j] = parent1.whi[i,j]
-                else:
                     self.whi[i,j] = parent2.whi[i,j]
                     
-        randC = np.random.randint(self.whh.shape[0])
-        randR = np.random.randint(self.whh.shape[1])
+        
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
-                    if i < randR or ( i == randR and j <= randC):
-                        self.whh[i,j] = parent1.whh[i,j]
-                    else:
-                        self.whh[i,j] = parent2.whh[i,j]
+                # randC = np.random.randint(self.whh.shape[0])
+                # randR = np.random.randint(self.whh.shape[1])
+                if i < randR or ( i == randR and j <= randC):
+                    self.whh[i,j] = parent1.whh[i,j]
+                else:
+                    self.whh[i,j] = parent2.whh[i,j]
                 
-        randC = np.random.randint(self.woh.shape[0])
-        randR = np.random.randint(self.woh.shape[1])
+       
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
+                # randC = np.random.randint(self.woh.shape[0])
+                # randR = np.random.randint(self.woh.shape[1])
                 if i < randR or ( i == randR and j <= randC):
                     self.woh[i,j] = parent1.woh[i,j]
                 else:
@@ -143,6 +146,7 @@ class NeuralNetwork:
 
 
     def clone(self):
-        return(copy.deepcopy(self))
+        # return(copy.deepcopy(self))
+        return(self)
 
 

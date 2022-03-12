@@ -18,6 +18,11 @@ class Food:
         self.x = np.random.randint(self.settings.gridUnits) * self.settings.scale
         self.y = np.random.randint(self.settings.gridUnits) * self.settings.scale
         self.eaten = False
+
+    def spawnAtInitialLocation(self):
+        self.x = 15 * self.settings.scale
+        self.y = 15 * self.settings.scale
+        self.eaten = False
     
     def show(self):
         if(self.isFoodForBestSnake):
