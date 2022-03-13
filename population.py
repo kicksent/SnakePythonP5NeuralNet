@@ -51,8 +51,8 @@ class Population:
             for i in range(self.settings.numberOfSnakes):
                 bestIndex = self.getBestSnakeBrainIndex()
                 self.currentBestIndex = bestIndex
-                self.SnakeArr[bestIndex].hasBestBrain = True
-                self.SnakeArr[bestIndex].food.isFoodForBestSnake = True
+            self.SnakeArr[bestIndex].hasBestBrain = True
+            self.SnakeArr[bestIndex].food.isFoodForBestSnake = True
 
 
     def startNextGeneration(self):
@@ -93,8 +93,8 @@ class Population:
         
         # select two brains from the existing pool to mate
         # childNN = childNN.crossover(self.selectNNFromSnakeFitness(), self.selectNNFromSnakeFitness())
-        # childNN = childNN.crossover(self.selectNNFromSnakeFitness(), self.selectNNFromSnakeFitness())
-        childNN = childNN.crossover(self.getBestSnakeBrain(),  self.selectNNFromSnakeFitness())
+        childNN = childNN.crossover(self.getBestSnakeBrain(), self.selectNNFromSnakeFitness())
+        # childNN = childNN.crossover(self.getBestSnakeBrain(),  self.selectNNFromSnakeFitness())
         childNN = childNN.mutate()
         return(childNN)
                 

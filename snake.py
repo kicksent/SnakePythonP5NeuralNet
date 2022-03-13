@@ -32,7 +32,7 @@ class Snake:
             self.y += self.ySpeed
             self.x = constrain(self.x, 0, self.settings.windowSize-self.settings.scale)
             self.y = constrain(self.y, 0, self.settings.windowSize-self.settings.scale)
-            self.lifetime += 1;
+            self.lifetime += 1
 
             #class methods
             self.movesRemaining -= 1
@@ -41,11 +41,11 @@ class Snake:
             self.show()
 
     def show(self):
-        # if(self.hasBestBrain):
-        fill(255)
-        square((self.x, self.y), self.settings.scale)
-        for i in range(len(self.tail)):
-            square(self.tail[i], self.settings.scale)
+        if(self.hasBestBrain):
+            fill(255)
+            square((self.x, self.y), self.settings.scale)
+            for i in range(len(self.tail)):
+                square(self.tail[i], self.settings.scale)
 
 
     def dir(self, x, y):
@@ -63,7 +63,7 @@ class Snake:
         d = dist((self.x, self.y), (self.food.x, self.food.y))  
         if(d == 0):
             self.total+=1
-            self.movesRemaining += 150
+            self.movesRemaining = 100
             self.food.eaten = True
             if(self.total > self.settings.globalBestTotal):
                 self.settings.globalBestTotal = self.total
@@ -75,25 +75,24 @@ class Snake:
         if(self.movesRemaining < 0):
             self.alive = False
             self.settings.numberOfSnakesAlive -= 1
-            self.calcFitness()
+            # self.calcFitness()
             self.settings.totalFitness += self.fitness
-            print("Fitness:", self.fitness, "snake ran out of moves, moves remaining:", self.movesRemaining)
+            if(self.fitness > 0):
+                print("Fitness:", self.fitness, "snake ran out of moves, moves remaining:", self.movesRemaining)
         else:
             for i in range(len(self.tail)):
                 d = dist((self.x, self.y), (self.tail[i]))
                 if d == 0:
                     self.alive = False
                     self.settings.numberOfSnakesAlive -= 1
-                    self.calcFitness()
+                    # self.calcFitness()
                     self.settings.totalFitness += self.fitness
-                    print("Fitness:", self.fitness, "snake died to wall or tail")
+                    if(self.fitness > 0):
+                        print("Fitness:", self.fitness, "snake died to wall or tail")
     
-    def setFitness(self, fitnessValue):
-        self.fitness = fitnessValue
-
     def calcFitness(self):
         if(self.total < 10):
-            self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total);
+            self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total)
         else:
             self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
         
