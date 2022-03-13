@@ -95,6 +95,8 @@ class Snake:
             self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total)
         else:
             self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
+        if(self.fitness < 500):
+            self.fitness = 0
         
     def resetSnake(self):
         self.xSpeed = self.settings.scale

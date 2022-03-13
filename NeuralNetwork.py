@@ -105,34 +105,26 @@ class NeuralNetwork:
 
 
     def crossover(self, parent1, parent2): 
-        # randC = np.random.randint(self.whi.shape[0])
-        # randR = np.random.randint(self.whi.shape[1])
+        randC = np.random.randint(self.whi.shape[0])
+        randR = np.random.randint(self.whi.shape[1])
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
-                randC = np.random.randint(self.whi.shape[0])
-                randR = np.random.randint(self.whi.shape[1])
                 if i < randR or ( i == randR and j <= randC):
                     self.whi[i,j] = parent1.whi[i,j]
                 else:
                     self.whi[i,j] = parent2.whi[i,j]
-        # randC = np.random.randint(self.whi.shape[0])
-        # randR = np.random.randint(self.whi.shape[1])        
-        
+        randC = np.random.randint(self.whi.shape[0])
+        randR = np.random.randint(self.whi.shape[1])        
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
-                randC = np.random.randint(self.whh.shape[0])
-                randR = np.random.randint(self.whh.shape[1])
                 if i < randR or ( i == randR and j <= randC):
                     self.whh[i,j] = parent1.whh[i,j]
                 else:
                     self.whh[i,j] = parent2.whh[i,j]
-        # randC = np.random.randint(self.whi.shape[0])
-        # randR = np.random.randint(self.whi.shape[1])   
-       
+        randC = np.random.randint(self.whi.shape[0])
+        randR = np.random.randint(self.whi.shape[1])   
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
-                randC = np.random.randint(self.woh.shape[0])
-                randR = np.random.randint(self.woh.shape[1])
                 if i < randR or ( i == randR and j <= randC):
                     self.woh[i,j] = parent1.woh[i,j]
                 else:
