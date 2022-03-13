@@ -141,7 +141,6 @@ class NeuralNetwork:
 
 
     def clone(self):
-        # return(copy.deepcopy(self))
-        return(self)
+        copy.deepcopy(self)
 
 

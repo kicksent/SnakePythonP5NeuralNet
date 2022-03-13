@@ -72,12 +72,15 @@ class Population:
         
         bestIndex = self.getBestSnakeBrainIndex()
         for i in range(self.settings.numberOfSnakes):
-            #create babies
-            if(i == bestIndex):
-                #keep best snake
-                self.NNArr[i] = self.NNArr[i].clone()
+            
+            #keep best snake or other snakes that are close!
+            if(i == bestIndex ):
+                self.NNArr[i] = self.NNArr[i]
+            elif(self.SnakeArr[i].fitness >= self.SnakeArr[bestIndex].fitness * .5):
+                self.NNArr[i] = self.NNArr[i]
             else:
-                self.NNArr[i] = self.naturalSelection(i).clone()
+                #create babies and match them with snakes based on score
+                self.NNArr[i] = self.naturalSelection(i)
 
 
     def resetSnakesAndFood(self):
