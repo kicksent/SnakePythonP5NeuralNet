@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 import copy
 import random
@@ -40,57 +41,41 @@ def test_crossover():
     assert True
 
 
-def test_clone():
-    # create an instance of NN
-    NN = NeuralNetwork(settings, P.InputArr[0])
-    # set temp to same instance
-    tempNN = NN
-    # attempt to clone
-    NN = NN.clone()
-    # compare
-    if NN == tempNN:
-        assert False
-    assert True
 
-    # for i in range(len(tempNN[0])):
-    #     if(tempNN[0] != NN[0]):
-    #         assert(false)
-    print(NN)
+# def test_startNextGeneration():
+#     # prevent side effects from test
+#     curMutationRate = settings.mutationRate
+#     settings.mutationRate = 0
 
-def test_startNextGeneration():
-    # prevent side effects from test
-    curMutationRate = settings.mutationRate
-    settings.mutationRate = 0
+#     # set some snake fitnesses for test
+#     for i in range(len(P.SnakeArr)):
+#         P.SnakeArr[i].fitness = random.randint(1,5000)
 
-    # set some snake fitnesses for test
-    for i in range(len(P.SnakeArr)):
-        P.SnakeArr[i].fitness = random.randint(1,5000)
-
-    tmpNNArr = copy.deepcopy(P.NNArr)
-    P.startNextGeneration()
-    for i in range(0, len(P.NNArr)):
-        if(tmpNNArr[i] == P.NNArr[i]):
-            assert False
-        for j in range(len(tmpNNArr[i].whi)):
-            if tmpNNArr[i].whi[j][j] == P.NNArr[i].whi[j][j]:
-                print(tmpNNArr[i].whi[j][j], P.NNArr[i].whi[j][j], "i: {} j: {}".format(i, j))
-                assert False
+#     tmpNNArr = copy.deepcopy(P.NNArr)
+#     P.startNextGeneration()
+#     for i in range(0, len(P.NNArr)):
+#         if(tmpNNArr[i] == P.NNArr[i]):
+#             assert False
+#         for j in range(len(tmpNNArr[i].whi)):
+#             if tmpNNArr[i].whi[j][j] == P.NNArr[i].whi[j][j]:
+#                 print(tmpNNArr[i].whi[j][j], P.NNArr[i].whi[j][j], "i: {} j: {}".format(i, j))
+#                 assert False
     
-    # further testing for unique objects
-    for i in range(0, len(P.NNArr)):
-        for j in range(0, len(P.NNArr)):
-            if(P.NNArr[i] == tmpNNArr[i]):
-                assert False
+#     # further testing for unique objects
+#     for i in range(0, len(P.NNArr)):
+#         for j in range(0, len(P.NNArr)):
+#             if(P.NNArr[i] == tmpNNArr[i]):
+#                 assert False
 
-    assert True
+#     assert True
 
-    #restore previous state
-    settings.mutationRate = curMutationRate
+#     #restore previous state
+#     settings.mutationRate = curMutationRate
 
-def test_startNextGeneration_multiple():
-    test_startNextGeneration()
-    test_startNextGeneration()
-    test_startNextGeneration()
+# def test_startNextGeneration_multiple():
+#     test_startNextGeneration()
+#     test_startNextGeneration()
+#     test_startNextGeneration()
 
 
 # test fitness calculator
@@ -132,3 +117,31 @@ def test_fitness3():
     snake2.total = 7
     snake2.calcFitness()
     assert(snake2.fitness > snake1.fitness)
+
+
+def setup_population_with_snakes(values_range, total_snakes):
+    p = Population(settings)
+    settings.numberOfSnakes = total_snakes
+    p.setup()
+
+    for i in range(len(p.SnakeArr)):
+        p.SnakeArr[i].fitness = np.random.randint(0, values_range)
+        p.settings.totalFitness += p.SnakeArr[i].fitness
+        p.SnakeArr[i].alive = False
+    return p
+
+def test_selectNNFromSnakeFitness():
+    total_snakes = 10
+    p = setup_population_with_snakes(3, total_snakes)
+    for i in range(1000):
+        index = p.selectNNFromSnakeFitness()
+        print(index)
+        assert(index <= total_snakes and index >= 0)
+        sum = 0
+        for i in range(index):
+            sum += p.SnakeArr[i].fitness
+        print("sum: {}".format(sum))
+    
+
+
+    

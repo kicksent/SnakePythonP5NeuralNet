@@ -22,6 +22,7 @@ class Settings():
         self.totalFitness = 0
         self.mutationRate = .01
         self.globalBestScore = 0
+        self.globalBestIndex = 0
         self.globalBestTotal = 0
         
 

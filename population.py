@@ -1,3 +1,4 @@
+from settings import Settings
 from snake import Snake
 from food import Food
 from inputs import Inputs
@@ -10,11 +11,11 @@ from cprofiler import profile
 
 class Population:
     def __init__(self, settings):
-        self.settings = settings
-        self.FoodArr = []
-        self.SnakeArr = []
-        self.InputArr = []
-        self.NNArr = []
+        self.settings: Settings = settings
+        self.FoodArr: list[Food] = []
+        self.SnakeArr: list[Snake] = []
+        self.InputArr: list[Inputs] = []
+        self.NNArr: list[NeuralNetwork] = []
         self.snakesAlive = settings.numberOfSnakes
         self.currentBestIndex = 0
     def setup(self):
@@ -33,8 +34,8 @@ class Population:
     
     
     def run(self):
-        self.updateBestBrain()
         for i in range(self.settings.numberOfSnakes):
+            self.updateBestBrain()
             self.SnakeArr[i].update()
             if(self.SnakeArr[i].alive == True):
                 self.FoodArr[i].update()
@@ -42,15 +43,17 @@ class Population:
                 self.NNArr[i].controlSnake(self.SnakeArr[i])
             self.snakesAlive = self.settings.numberOfSnakesAlive
             if(self.snakesAlive == 0):
-                print("All Snakes Have Died")
+                print("gen bests ------ index: {} score: {}".format(self.getBestSnakeBrainIndex(), self.SnakeArr[self.getBestSnakeBrainIndex()].fitness))
+                print("global bests --- index: {} score: {}".format(self.settings.globalBestIndex, self.settings.globalBestScore))
                 self.startNextGeneration()
             
             
     def updateBestBrain(self):
         if(self.SnakeArr[self.currentBestIndex].alive == False):
-            for i in range(self.settings.numberOfSnakes):
-                bestIndex = self.getBestSnakeBrainIndex()
-                self.currentBestIndex = bestIndex
+            self.SnakeArr[self.currentBestIndex].hasBestBrain = False
+            self.SnakeArr[self.currentBestIndex].food.isFoodForBestSnake = False
+            bestIndex = self.getBestSnakeBrainIndex()
+            self.currentBestIndex = bestIndex
             self.SnakeArr[bestIndex].hasBestBrain = True
             self.SnakeArr[bestIndex].food.isFoodForBestSnake = True
 
@@ -74,10 +77,8 @@ class Population:
         for i in range(self.settings.numberOfSnakes):
             
             #keep best snake or other snakes that are close!
-            if(i == bestIndex ):
-                self.NNArr[i] = self.NNArr[i]
-            elif(self.SnakeArr[i].fitness >= self.SnakeArr[bestIndex].fitness * .5):
-                self.NNArr[i] = self.NNArr[i]
+            if(i == bestIndex):
+                self.NNArr[i] = self.NNArr[i] #do nothing for now 
             else:
                 #create babies and match them with snakes based on score
                 self.NNArr[i] = self.naturalSelection(i)
@@ -95,49 +96,41 @@ class Population:
         childNN = NeuralNetwork(self.settings, self.InputArr[index])
         
         # select two brains from the existing pool to mate
-        # childNN = childNN.crossover(self.selectNNFromSnakeFitness(), self.selectNNFromSnakeFitness())
-        childNN = childNN.crossover(self.getBestSnakeBrain(), self.selectNNFromSnakeFitness())
-        # childNN = childNN.crossover(self.getBestSnakeBrain(),  self.selectNNFromSnakeFitness())
+        switch = np.random.random()
+        # paranoia
+        if(switch > .5):
+            index = self.selectNNFromSnakeFitness()
+            childNN = childNN.crossover(childNN, self.NNArr[index])
+        else:
+            index = self.selectNNFromSnakeFitness()
+            childNN = childNN.crossover(self.NNArr[index], childNN)
         childNN = childNN.mutate()
         return(childNN)
                 
     def selectNNFromSnakeFitness(self):
+        # has test in test_1.py
         rand = random.randint(0, self.settings.totalFitness)
-        sum = 0
+        # print("random number selected: {} totalfitness: {}".format(rand, self.settings.totalFitness))
+        sum = 0 
         for i in range(self.settings.numberOfSnakes):
+            sum += self.SnakeArr[i].fitness
             if(sum >= rand):
-                return self.NNArr[i]
-            else:
-                sum += self.SnakeArr[i].fitness
-        if(sum >= rand):
-            return self.NNArr[i]
-        #leave here, in case bug still exists
-        total=0
-        for i in range(self.settings.numberOfSnakes):
-            total += self.SnakeArr[i].fitness
-            print("Debug fitness", self.settings.numberOfSnakes,  self.SnakeArr[i].fitness)
+                # print("index {} was selected for breeding with fitness {} sum: {}, rand: {}".format(i, self.SnakeArr[i].fitness, sum, rand))
+                return i
 
-        raise Exception("Function should not reach here. Sum: {}, rand: {}, Fitness Sum: {} {} {} ".format(sum, rand, self.settings.totalFitness, total, total == self.settings.totalFitness))
+        raise Exception("Function should not reach here.")
 
     def getBestSnakeBrainIndex(self):
-        max_index = 0
-        max_fitness = 0
+        #don't update the best index unless it beats the global best!
         for i in range(self.settings.numberOfSnakes):
-            if(self.SnakeArr[i].fitness > max_fitness):
+            if(self.SnakeArr[i].fitness > self.settings.globalBestScore):
                 self.settings.globalBestScore = self.SnakeArr[i].fitness
-                max_index = i
-                max_fitness = self.SnakeArr[i].fitness
-        return(max_index)
+                self.settings.globalBestIndex = i
+        return(self.settings.globalBestIndex)
 
     def getBestSnakeBrain(self):
-        max_index = 0
-        max_fitness = 0
-        for i in range(self.settings.numberOfSnakes):
-            if(self.SnakeArr[i].fitness > max_fitness):
-                self.settings.globalBestScore = self.SnakeArr[i].fitness
-                max_index = i
-                max_fitness = self.SnakeArr[i].fitness
-        return(self.NNArr[max_index])
+        bestIndex = self.getBestSnakeBrainIndex()
+        return(self.NNArr[bestIndex])
     
 
         

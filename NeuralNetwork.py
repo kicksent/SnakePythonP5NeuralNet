@@ -4,7 +4,6 @@ np.set_printoptions(linewidth = 200, precision = 10)
 from scipy.special import expit
 
 import numba
-from numba import jit
 
 from cprofiler import profile
 from p5 import *
@@ -53,7 +52,6 @@ class NeuralNetwork:
         self.outputArray = res3
         #print(self.outputArray)
 
-    
     def feedForward(self, matrix, arr):
         tempArr = np.append(arr, [1.0])
         tempArr = np.matrix(tempArr).T
@@ -61,7 +59,6 @@ class NeuralNetwork:
         res = self.sigmoid(res)
         res = np.array(res).flatten()
         return(res)
-
 
     def updateTurnDirection(self, snake):
         max = 0
@@ -83,7 +80,7 @@ class NeuralNetwork:
         elif maxIndex == 3:
             #down
             snake.dir(0, 1)
-    
+
     def mutate(self):
         for i in range(self.whi.shape[0]):
             for j in range(self.whi.shape[1]):
@@ -101,7 +98,7 @@ class NeuralNetwork:
                     self.woh[i,j] += np.random.random()/5
                     self.woh[i,j] = constrain(self.woh[i,j], -1, 1)
         return(self)
-        
+
 
 
     def crossover(self, parent1, parent2): 
@@ -140,7 +137,5 @@ class NeuralNetwork:
         return(arr)
 
 
-    def clone(self):
-        copy.deepcopy(self)
 
 

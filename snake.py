@@ -1,5 +1,8 @@
 from p5 import *
 import numpy as np
+
+from food import Food
+from settings import Settings
 class Snake:
     def __init__(self, settings, foodObj):
         self.x = settings.windowSize/2
@@ -7,8 +10,8 @@ class Snake:
         self.xSpeed = settings.scale
         self.ySpeed = 0
         self.scale = settings.scale
-        self.settings = settings
-        self.food = foodObj
+        self.settings: Settings = settings
+        self.food: Food = foodObj
         self.total = 2
         self.tail = [(self.x-self.settings.scale, self.y),(self.x-(self.settings.scale*2), self.y)]
         self.alive = True
@@ -69,26 +72,23 @@ class Snake:
                 self.settings.globalBestTotal = self.total
 
     def checkForDeath(self):
-        #print("Moves remaining:", self.movesRemaining)
         self.calcFitness()
 
         if(self.movesRemaining < 0):
             self.alive = False
             self.settings.numberOfSnakesAlive -= 1
-            # self.calcFitness()
             self.settings.totalFitness += self.fitness
             if(self.fitness > 0):
-                print("Fitness:", self.fitness, "snake ran out of moves, moves remaining:", self.movesRemaining)
+                print("Fitness:", self.fitness, "out of moves", self.movesRemaining)
         else:
             for i in range(len(self.tail)):
                 d = dist((self.x, self.y), (self.tail[i]))
                 if d == 0:
                     self.alive = False
                     self.settings.numberOfSnakesAlive -= 1
-                    # self.calcFitness()
                     self.settings.totalFitness += self.fitness
                     if(self.fitness > 0):
-                        print("Fitness:", self.fitness, "snake died to wall or tail")
+                        print("Fitness:", self.fitness, "snake crashed it's face")
     
     def calcFitness(self):
         if(self.total < 10):
@@ -96,7 +96,7 @@ class Snake:
         else:
             self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
         if(self.fitness < 500):
-            self.fitness = 0
+            self.fitness = 1
         
     def resetSnake(self):
         self.xSpeed = self.settings.scale
