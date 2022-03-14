@@ -5,8 +5,8 @@ from food import Food
 from settings import Settings
 class Snake:
     def __init__(self, settings, foodObj):
-        self.x = settings.windowSize/2
-        self.y = settings.windowSize/2
+        self.x = settings.windowSize / 2
+        self.y = settings.windowSize / 2
         self.xSpeed = settings.scale
         self.ySpeed = 0
         self.scale = settings.scale
@@ -25,7 +25,7 @@ class Snake:
             #update tail
             for i in range(len(self.tail)-1):
                 self.tail[i] = self.tail[i+1]
-            if(self.total-1 == len(self.tail)):
+            if(self.total - 1 == len(self.tail)):
                 self.tail.append((self.x, self.y))
             else:
                 self.tail[self.total - 1] = (self.x, self.y)
@@ -55,18 +55,18 @@ class Snake:
         x *= self.scale
         y *= self.scale
         if abs(self.xSpeed) == abs(x):
-            self.xSpeed = self.xSpeed;
+            self.xSpeed = self.xSpeed
         elif abs(self.ySpeed) == abs(y):
-            self.ySpeed = self.ySpeed;
+            self.ySpeed = self.ySpeed
         else:
-            self.xSpeed = x;
-            self.ySpeed = y;
+            self.xSpeed = x
+            self.ySpeed = y
 
     def eatFood(self):
         d = dist((self.x, self.y), (self.food.x, self.food.y))  
         if(d == 0):
             self.total+=1
-            self.movesRemaining = 100
+            self.movesRemaining += 100
             self.food.eaten = True
             if(self.total > self.settings.globalBestTotal):
                 self.settings.globalBestTotal = self.total
@@ -95,8 +95,6 @@ class Snake:
             self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total)
         else:
             self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
-        if(self.fitness < 500):
-            self.fitness = 1
         
     def resetSnake(self):
         self.xSpeed = self.settings.scale

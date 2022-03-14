@@ -17,7 +17,7 @@ class Population:
         self.InputArr: list[Inputs] = []
         self.NNArr: list[NeuralNetwork] = []
         self.snakesAlive = settings.numberOfSnakes
-        self.currentBestIndex = 0
+        self.genBestIndex = 0
     def setup(self):
         for i in range(self.settings.numberOfSnakes):
             self.FoodArr.append(Food(self.settings))
@@ -43,19 +43,19 @@ class Population:
                 self.NNArr[i].controlSnake(self.SnakeArr[i])
             self.snakesAlive = self.settings.numberOfSnakesAlive
             if(self.snakesAlive == 0):
-                print("gen bests ------ index: {} score: {}".format(self.getBestSnakeBrainIndex(), self.SnakeArr[self.getBestSnakeBrainIndex()].fitness))
+                print("gen bests ------ index: {} score: {}".format(self.genBestIndex, self.SnakeArr[self.genBestIndex].fitness))
                 print("global bests --- index: {} score: {}".format(self.settings.globalBestIndex, self.settings.globalBestScore))
                 self.startNextGeneration()
             
             
     def updateBestBrain(self):
-        if(self.SnakeArr[self.currentBestIndex].alive == False):
-            self.SnakeArr[self.currentBestIndex].hasBestBrain = False
-            self.SnakeArr[self.currentBestIndex].food.isFoodForBestSnake = False
-            bestIndex = self.getBestSnakeBrainIndex()
-            self.currentBestIndex = bestIndex
-            self.SnakeArr[bestIndex].hasBestBrain = True
-            self.SnakeArr[bestIndex].food.isFoodForBestSnake = True
+        if(self.SnakeArr[self.genBestIndex].alive == False):
+            self.SnakeArr[self.genBestIndex].hasBestBrain = False
+            self.SnakeArr[self.genBestIndex].food.isFoodForBestSnake = False
+            #not idempotent:
+            self.calcBestSnakeBrainIndex()
+            self.SnakeArr[self.genBestIndex].hasBestBrain = True
+            self.SnakeArr[self.genBestIndex].food.isFoodForBestSnake = True
 
 
     def startNextGeneration(self):
@@ -72,13 +72,15 @@ class Population:
 
     def createNewBrains(self):
         #create a New NN from Old NN that has been mutated
-        
-        bestIndex = self.getBestSnakeBrainIndex()
+        self.calcBestSnakeBrainIndex()
+        bestIndex = self.genBestIndex
         for i in range(self.settings.numberOfSnakes):
             
-            #keep best snake or other snakes that are close!
-            if(i == bestIndex):
+            #keep best global snake, and the best one for this generation!
+            if(i == bestIndex or i == self.settings.globalBestIndex):
                 self.NNArr[i] = self.NNArr[i] #do nothing for now 
+                self.SnakeArr[i].hasBestBrain = True
+                self.FoodArr[i].isFoodForBestSnake = True
             else:
                 #create babies and match them with snakes based on score
                 self.NNArr[i] = self.naturalSelection(i)
@@ -96,14 +98,8 @@ class Population:
         childNN = NeuralNetwork(self.settings, self.InputArr[index])
         
         # select two brains from the existing pool to mate
-        switch = np.random.random()
-        # paranoia
-        if(switch > .5):
-            index = self.selectNNFromSnakeFitness()
-            childNN = childNN.crossover(childNN, self.NNArr[index])
-        else:
-            index = self.selectNNFromSnakeFitness()
-            childNN = childNN.crossover(self.NNArr[index], childNN)
+        index = self.selectNNFromSnakeFitness()
+        childNN = childNN.crossover(childNN, self.NNArr[index])
         childNN = childNN.mutate()
         return(childNN)
                 
@@ -120,17 +116,21 @@ class Population:
 
         raise Exception("Function should not reach here.")
 
-    def getBestSnakeBrainIndex(self):
+    def calcBestSnakeBrainIndex(self):
         #don't update the best index unless it beats the global best!
+        genBestScore = 0
         for i in range(self.settings.numberOfSnakes):
+            if(self.SnakeArr[i].fitness > genBestScore):
+                genBestScore = self.SnakeArr[i].fitness
+                self.genBestIndex = i
+            #update global if it's better
             if(self.SnakeArr[i].fitness > self.settings.globalBestScore):
                 self.settings.globalBestScore = self.SnakeArr[i].fitness
                 self.settings.globalBestIndex = i
-        return(self.settings.globalBestIndex)
+    
 
     def getBestSnakeBrain(self):
-        bestIndex = self.getBestSnakeBrainIndex()
-        return(self.NNArr[bestIndex])
+        return(self.NNArr[self.genBestIndex])
     
 
         

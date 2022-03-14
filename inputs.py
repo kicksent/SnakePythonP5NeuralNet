@@ -26,45 +26,45 @@ class Inputs:
         inputVector = np.array([0]*24, dtype=float)
         #distances: temp[0] is food, temp[1] is tail, temp[2] is wall
         #look left
-        temp = self.look([-10, 0]);
-        inputVector[0] = temp[0];
-        inputVector[1] = temp[1];
-        inputVector[2] = temp[2];
+        temp = self.look([-10, 0])
+        inputVector[0] = temp[0]
+        inputVector[1] = temp[1]
+        inputVector[2] = temp[2]
         #look left/up  
-        temp2 = self.look([-10, -10]);
-        inputVector[3] = temp2[0];
-        inputVector[4] = temp2[1];
-        inputVector[5] = temp2[2];
+        temp2 = self.look([-10, -10])
+        inputVector[3] = temp2[0]
+        inputVector[4] = temp2[1]
+        inputVector[5] = temp2[2]
         #look up
-        temp3 = self.look([0, -10]);
-        inputVector[6] = temp3[0];
-        inputVector[7] = temp3[1];
-        inputVector[8] = temp3[2];
+        temp3 = self.look([0, -10])
+        inputVector[6] = temp3[0]
+        inputVector[7] = temp3[1]
+        inputVector[8] = temp3[2]
         #look up/right
-        temp4 = self.look([10, -10]);
-        inputVector[9] = temp4[0];
-        inputVector[10] = temp4[1];
-        inputVector[11] = temp4[2];
+        temp4 = self.look([10, -10])
+        inputVector[9] = temp4[0]
+        inputVector[10] = temp4[1]
+        inputVector[11] = temp4[2]
         #look right
-        temp5 = self.look([10, 0]);
-        inputVector[12] = temp5[0];
-        inputVector[13] = temp5[1];
-        inputVector[14] = temp5[2];
+        temp5 = self.look([10, 0])
+        inputVector[12] = temp5[0]
+        inputVector[13] = temp5[1]
+        inputVector[14] = temp5[2]
         #look right/down
-        temp6 = self.look([10, 10]);
-        inputVector[15] = temp6[0];
-        inputVector[16] = temp6[1];
-        inputVector[17] = temp6[2];
+        temp6 = self.look([10, 10])
+        inputVector[15] = temp6[0]
+        inputVector[16] = temp6[1]
+        inputVector[17] = temp6[2]
         #look down
-        temp7 = self.look([0, 10]);
-        inputVector[18] = temp7[0];
-        inputVector[19] = temp7[1];
-        inputVector[20] = temp7[2];
+        temp7 = self.look([0, 10])
+        inputVector[18] = temp7[0]
+        inputVector[19] = temp7[1]
+        inputVector[20] = temp7[2]
         #look down/left
-        temp8 = self.look([-10, 10]);
-        inputVector[21] = temp8[0];
-        inputVector[22] = temp8[1];
-        inputVector[23] = temp8[2];
+        temp8 = self.look([-10, 10])
+        inputVector[21] = temp8[0]
+        inputVector[22] = temp8[1]
+        inputVector[23] = temp8[2]
         self.inputVector = inputVector
 
     

@@ -34,9 +34,29 @@ def test_crossover():
 
     #the value must be either the parent 1 or parent2 values
     for i in range(len(childarr)):
-        if(childarr[i] != p2arr[i] and childarr[i] != p1arr[i]):
+        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
             assert False
-        elif(childarr[i] == p2arr[i] and childarr[i] == p1arr[i]):
+    assert True
+
+    # test that the values in the child come from the parents
+    p1arr = P.NNArr[0].whi_to_arr()
+    p2arr = P.NNArr[1].whi_to_arr()
+    childarr = childNN.whi_to_arr()
+
+    #the value must be either the parent 1 or parent2 values
+    for i in range(len(childarr)):
+        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
+            assert False
+    assert True
+
+    # test that the values in the child come from the parents
+    p1arr = P.NNArr[0].whh_to_arr()
+    p2arr = P.NNArr[1].whh_to_arr()
+    childarr = childNN.whh_to_arr()
+
+    #the value must be either the parent 1 or parent2 values
+    for i in range(len(childarr)):
+        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
             assert False
     assert True
 

@@ -14,10 +14,10 @@ import copy
 class NeuralNetwork:
     def __init__(self, settings, inputs):
         self.settings = settings
-        self.num_input = settings.neutalNetworkDimensions["input"];
-        self.num_hidden = settings.neutalNetworkDimensions["hidden"];
-        self.num_output = settings.neutalNetworkDimensions["output"];
-        #self.in_neurons = [];
+        self.num_input = settings.neutalNetworkDimensions["input"]
+        self.num_hidden = settings.neutalNetworkDimensions["hidden"]
+        self.num_output = settings.neutalNetworkDimensions["output"]
+        #self.in_neurons = []
         #generate random starting weights for snake
         #np.array([np.random.uniform(-1,1) for i in range(8)]).reshape(2,4)
         self.whi = np.array([np.random.uniform(-1,1) for i in range(self.num_hidden*(self.num_input+1))]).reshape(self.num_hidden, self.num_input+1)
@@ -26,7 +26,7 @@ class NeuralNetwork:
         #self.whh = np.random.rand(self.num_hidden, self.num_hidden + 1)
         self.woh = np.array([np.random.uniform(-1,1) for i in range(self.num_output*(self.num_hidden+1))]).reshape(self.num_output, self.num_hidden+1)
         #self.woh = np.random.rand(self.num_output, self.num_hidden + 1)
-        self.dir_array = ["left", "right", "up", "down"];
+        self.dir_array = ["left", "right", "up", "down"]
         self.outputArray = []
         self.inputs = inputs
         self.isBestBrain = False
@@ -110,16 +110,16 @@ class NeuralNetwork:
                     self.whi[i,j] = parent1.whi[i,j]
                 else:
                     self.whi[i,j] = parent2.whi[i,j]
-        randC = np.random.randint(self.whi.shape[0])
-        randR = np.random.randint(self.whi.shape[1])        
+        randC = np.random.randint(self.whh.shape[0])
+        randR = np.random.randint(self.whh.shape[1])        
         for i in range(self.whh.shape[0]):
             for j in range(self.whh.shape[1]):
                 if i < randR or ( i == randR and j <= randC):
                     self.whh[i,j] = parent1.whh[i,j]
                 else:
                     self.whh[i,j] = parent2.whh[i,j]
-        randC = np.random.randint(self.whi.shape[0])
-        randR = np.random.randint(self.whi.shape[1])   
+        randC = np.random.randint(self.woh.shape[0])
+        randR = np.random.randint(self.woh.shape[1])   
         for i in range(self.woh.shape[0]):
             for j in range(self.woh.shape[1]):
                 if i < randR or ( i == randR and j <= randC):
@@ -128,13 +128,27 @@ class NeuralNetwork:
                     self.woh[i,j] = parent2.woh[i,j]
         return(self)
             
-    #used for testing
+    #used for testing, but might be useful for this NN class too
+    def whi_to_arr(self):
+        arr = []
+        for i in range(self.num_hidden):
+            for j in range(self.num_input+1):
+                arr.append(self.whi[i][j])
+        return(arr)
+    def whh_to_arr(self):
+        arr = []
+        for i in range(self.num_hidden):
+            for j in range(self.num_hidden+1):
+                arr.append(self.whh[i][j])
+        return(arr)
     def woh_to_arr(self):
         arr = []
         for i in range(self.num_output):
             for j in range(self.num_hidden+1):
                 arr.append(self.woh[i][j])
         return(arr)
+    
+    
 
 
 
