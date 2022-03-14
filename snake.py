@@ -44,11 +44,11 @@ class Snake:
             self.show()
 
     def show(self):
-        if(self.hasBestBrain):
-            fill(255)
-            square((self.x, self.y), self.settings.scale)
-            for i in range(len(self.tail)):
-                square(self.tail[i], self.settings.scale)
+        # if(self.hasBestBrain):
+        fill(255)
+        square((self.x, self.y), self.settings.scale)
+        for i in range(len(self.tail)):
+            square(self.tail[i], self.settings.scale)
 
 
     def dir(self, x, y):
@@ -73,7 +73,6 @@ class Snake:
 
     def checkForDeath(self):
         self.calcFitness()
-
         if(self.movesRemaining < 0):
             self.alive = False
             self.settings.numberOfSnakesAlive -= 1
@@ -95,6 +94,8 @@ class Snake:
             self.fitness = (self.lifetime * self.lifetime) * np.power(2, self.total)
         else:
             self.fitness = ((self.lifetime * self.lifetime) * np.power(2, 10)) * (self.total-9)
+        if(self.fitness < 600):
+            self.fitness = 0
         
     def resetSnake(self):
         self.xSpeed = self.settings.scale

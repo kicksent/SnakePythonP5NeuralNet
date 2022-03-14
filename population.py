@@ -26,6 +26,7 @@ class Population:
             self.NNArr.append(NeuralNetwork(self.settings, self.InputArr[i]))
         self.resetBestBrain()
         self.updateBestBrain()
+        self.generateRandomFoodList()
     
     def resetBestBrain(self):
         for i in range(self.settings.numberOfSnakes):
@@ -132,6 +133,13 @@ class Population:
     def getBestSnakeBrain(self):
         return(self.NNArr[self.genBestIndex])
     
+    def generateRandomFoodList(self):
+        #make the food locations the same for all snakes
+        spawnLocations = []
+        for i in range(1,100):
+            spawnLocations.append([np.random.randint(self.settings.gridUnits) * self.settings.scale, np.random.randint(self.settings.gridUnits) * self.settings.scale])
+        for i in range(len(self.FoodArr)):
+            self.FoodArr[i].spawnLocations = spawnLocations
 
         
 
