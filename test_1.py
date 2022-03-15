@@ -34,8 +34,10 @@ def test_crossover():
 
     #the value must be either the parent 1 or parent2 values
     for i in range(len(childarr)):
-        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
+        if(childarr[i] != p2arr[i] and childarr[i] != p1arr[i]):
+            print(childarr[i], p1arr[i], p2arr[i])
             assert False
+            
     assert True
 
     # test that the values in the child come from the parents
@@ -45,7 +47,7 @@ def test_crossover():
 
     #the value must be either the parent 1 or parent2 values
     for i in range(len(childarr)):
-        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
+        if(childarr[i] != p2arr[i] and childarr[i] != p1arr[i]):
             assert False
     assert True
 
@@ -56,22 +58,20 @@ def test_crossover():
 
     #the value must be either the parent 1 or parent2 values
     for i in range(len(childarr)):
-        if(childarr[i] != p2arr[i] or childarr[i] != p1arr[i]):
+        if(childarr[i] != p2arr[i] and childarr[i] != p1arr[i]):
             assert False
     assert True
 
-
+##idk what this is testing, commenting for now, code is old af
 
 # def test_startNextGeneration():
-#     # prevent side effects from test
-#     curMutationRate = settings.mutationRate
-#     settings.mutationRate = 0
-
 #     # set some snake fitnesses for test
 #     for i in range(len(P.SnakeArr)):
 #         P.SnakeArr[i].fitness = random.randint(1,5000)
 
-#     tmpNNArr = copy.deepcopy(P.NNArr)
+#     tmpNNArr = P.NNArr
+    
+#     copy.deepcopy(P.NNArr)
 #     P.startNextGeneration()
 #     for i in range(0, len(P.NNArr)):
 #         if(tmpNNArr[i] == P.NNArr[i]):
@@ -89,8 +89,6 @@ def test_crossover():
 
 #     assert True
 
-#     #restore previous state
-#     settings.mutationRate = curMutationRate
 
 # def test_startNextGeneration_multiple():
 #     test_startNextGeneration()
@@ -155,13 +153,30 @@ def test_selectNNFromSnakeFitness():
     p = setup_population_with_snakes(3, total_snakes)
     for i in range(1000):
         index = p.selectNNFromSnakeFitness()
-        print(index)
         assert(index <= total_snakes and index >= 0)
         sum = 0
         for i in range(index):
             sum += p.SnakeArr[i].fitness
-        print("sum: {}".format(sum))
-    
 
+def test_selectSnake():
+    p = setup_population_with_snakes(1000, 5)
+    best = 0
+    bestIndex = 0
+    for i in range(len(p.SnakeArr)):
+        if(p.SnakeArr[i].fitness > best):
+            best = p.SnakeArr[i].fitness
+            bestIndex = i
+            settings.globalBestIndex = i
+            p.genBestIndex = i 
+    p.settings.mutationRate = 1
+    p2 = copy.deepcopy(p)
+    p.createNewBrains()
+    for i in range(len(p.NNArr)):
+        for j in range(len(p.NNArr[i].woh_to_arr())):
+            if(i == bestIndex):
+                assert(p.NNArr[i].woh_to_arr()[j] == p2.NNArr[i].woh_to_arr()[j])
+            else:
+                #shouldn't match if it's not best since the mutation rate is 100%
+                assert(p.NNArr[i].woh_to_arr()[j] != p2.NNArr[i].woh_to_arr()[j] )
 
     

@@ -148,6 +148,7 @@ class NeuralNetwork:
                 arr.append(self.woh[i][j])
         return(arr)
     
+       
     
 
 

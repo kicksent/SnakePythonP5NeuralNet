@@ -1,3 +1,4 @@
+import copy
 from settings import Settings
 from snake import Snake
 from food import Food
@@ -26,7 +27,6 @@ class Population:
             self.NNArr.append(NeuralNetwork(self.settings, self.InputArr[i]))
         self.resetBestBrain()
         self.updateBestBrain()
-        self.generateRandomFoodList()
     
     def resetBestBrain(self):
         for i in range(self.settings.numberOfSnakes):
@@ -44,8 +44,8 @@ class Population:
                 self.NNArr[i].controlSnake(self.SnakeArr[i])
             self.snakesAlive = self.settings.numberOfSnakesAlive
             if(self.snakesAlive == 0):
-                print("gen bests ------ index: {} score: {}".format(self.genBestIndex, self.SnakeArr[self.genBestIndex].fitness))
-                print("global bests --- index: {} score: {}".format(self.settings.globalBestIndex, self.settings.globalBestScore))
+                print("gen bests ------ index: {} eats: {} score: {}".format(self.genBestIndex, self.SnakeArr[self.genBestIndex].total, self.SnakeArr[self.genBestIndex].fitness))
+                print("global bests --- index: {} eats: {} score: {}".format(self.settings.globalBestIndex, self.settings.globalBestTotal, self.settings.globalBestScore))
                 self.startNextGeneration()
             
             
@@ -74,33 +74,27 @@ class Population:
     def createNewBrains(self):
         #create a New NN from Old NN that has been mutated
         self.calcBestSnakeBrainIndex()
-        bestIndex = self.genBestIndex
         for i in range(self.settings.numberOfSnakes):
-            
             #keep best global snake, and the best one for this generation!
-            if(i == bestIndex or i == self.settings.globalBestIndex):
-                self.NNArr[i] = self.NNArr[i] #do nothing for now 
-                self.SnakeArr[i].hasBestBrain = True
-                self.FoodArr[i].isFoodForBestSnake = True
-            else:
+            if(i != self.genBestIndex or i != self.settings.globalBestIndex):
                 #create babies and match them with snakes based on score
                 self.NNArr[i] = self.naturalSelection(i)
-
 
     def resetSnakesAndFood(self):
         for i in range(self.settings.numberOfSnakes):
             # self.FoodArr[i].spawnAtRandomLocation()
             self.SnakeArr[i].resetSnake()
 
-        
-    
     def naturalSelection(self, index):
+        self.calcBestSnakeBrainIndex()
+
         #create a new NeuralNetwork
         childNN = NeuralNetwork(self.settings, self.InputArr[index])
         
         # select two brains from the existing pool to mate
-        index = self.selectNNFromSnakeFitness()
-        childNN = childNN.crossover(childNN, self.NNArr[index])
+        selectedIndex1 = self.selectNNFromSnakeFitness()
+        selectedIndex2 = self.selectNNFromSnakeFitness()
+        childNN = childNN.crossover(self.NNArr[selectedIndex1], self.NNArr[selectedIndex2])
         childNN = childNN.mutate()
         return(childNN)
                 
@@ -130,17 +124,7 @@ class Population:
                 self.settings.globalBestIndex = i
     
 
-    def getBestSnakeBrain(self):
-        return(self.NNArr[self.genBestIndex])
     
-    def generateRandomFoodList(self):
-        #make the food locations the same for all snakes
-        spawnLocations = []
-        for i in range(1,100):
-            spawnLocations.append([np.random.randint(self.settings.gridUnits) * self.settings.scale, np.random.randint(self.settings.gridUnits) * self.settings.scale])
-        for i in range(len(self.FoodArr)):
-            self.FoodArr[i].spawnLocations = spawnLocations
 
         
-
-
+    

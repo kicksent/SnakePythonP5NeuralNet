@@ -40,7 +40,7 @@ class Snake:
             #class methods
             self.movesRemaining -= 1
             self.checkForDeath()
-            self.eatFood()
+            self.tryEatFood()
             self.show()
 
     def show(self):
@@ -62,13 +62,14 @@ class Snake:
             self.xSpeed = x
             self.ySpeed = y
 
-    def eatFood(self):
+    def tryEatFood(self):
         d = dist((self.x, self.y), (self.food.x, self.food.y))  
         if(d == 0):
             self.total+=1
             self.movesRemaining += 100
             self.food.eaten = True
             if(self.total > self.settings.globalBestTotal):
+                print("updating total!! : {} {}".format(self.settings.globalBestTotal, self.total ))
                 self.settings.globalBestTotal = self.total
 
     def checkForDeath(self):

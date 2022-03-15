@@ -31,9 +31,17 @@ class Settings():
         self.whh = None
         self.woh = None
 
+        self.spawnLocations = self.__generateRandomFoodList()
+
     def reset(self):
         self.numberOfSnakesAlive = self.numberOfSnakes
         self.totalFitness = 0
 
+    def __generateRandomFoodList(self):
+        #make the food locations the same for all snakes
+        spawnLocations = []
+        for i in range(1,100):
+            spawnLocations.append([np.random.randint(self.gridUnits) * self.scale, np.random.randint(self.gridUnits) * self.scale])
+        return(spawnLocations)
 
         

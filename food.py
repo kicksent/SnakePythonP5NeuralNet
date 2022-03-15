@@ -1,15 +1,18 @@
 import numpy as np
 from p5 import *
+
+from settings import Settings
 class Food:
     
     def __init__(self, settings):
-        self.settings = settings
+        self.settings: Settings = settings
         self.spawnLocations = []
         self.spawnIndex = 0
         self.x = 15 * self.settings.scale
         self.y = 15 * self.settings.scale
         self.eaten = False
         self.isFoodForBestSnake = False
+        self.spawnLocations = self.settings.spawnLocations
 
     def update(self):
         if(self.eaten == False):
@@ -26,8 +29,9 @@ class Food:
         self.eaten = False
 
     def spawnAtInitialLocation(self):
-        self.x = 15 * self.settings.scale
-        self.y = 15 * self.settings.scale
+        self.x = self.spawnLocations[self.spawnIndex][0]
+        self.y = self.spawnLocations[self.spawnIndex][1]
+        self.spawnIndex += 1
         self.eaten = False
     
     def show(self):
